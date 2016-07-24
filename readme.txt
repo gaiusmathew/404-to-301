@@ -8,7 +8,7 @@ Stable tag: 2.2.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Automatically redirect, log and notify all 404 page errors to any page using 301 redirect for SEO. No more 404 Errors in WebMaster tool.
+Automatically redirect, log and notify on all 404 page errors to any page using 301 redirect for SEO. No more 404 Errors in WebMaster tool.
 
 == Description ==
 

@@ -1,8 +1,7 @@
 <?php
-
 // If this file is called directly, abort.
-if (!defined('WPINC')) {
-    die('Damn it.! Dude you are looking for what?');
+if ( ! defined( 'WPINC' ) ) {
+    die( 'Damn it.! Dude you are looking for what?' );
 }
 
 /**
@@ -50,7 +49,7 @@ class _404_To_301_Admin {
      */
     public function __construct() {
 
-        $this->gnrl_options = get_option('i4t3_gnrl_options');
+        $this->gnrl_options = get_option( 'i4t3_gnrl_options' );
     }
 
     /**
@@ -69,10 +68,10 @@ class _404_To_301_Admin {
 
         global $pagenow;
 
-        if( ( $pagenow == 'admin.php' ) && ( in_array( $_GET['page'], array('i4t3-settings', 'i4t3-logs' ) ) ) ) {
+        if ( ( $pagenow == 'admin.php' ) && ( in_array( $_GET['page'], array( 'i4t3-settings', 'i4t3-logs' ) ) ) ) {
             wp_enqueue_style(
                 I4T3_NAME,
-                plugin_dir_url(__FILE__) . 'css/min/admin.css',
+                plugin_dir_url( __FILE__ ) . 'css/min/admin.css',
                 array(),
                 I4T3_VERSION,
                 'all'
@@ -96,11 +95,11 @@ class _404_To_301_Admin {
 
         global $pagenow;
 
-        if( ( $pagenow == 'admin.php' ) && ( in_array( $_GET['page'], array( 'i4t3-settings', 'i4t3-logs' ) ) ) ) {
+        if ( ( $pagenow == 'admin.php' ) && ( in_array( $_GET['page'], array( 'i4t3-settings', 'i4t3-logs' ) ) ) ) {
             wp_enqueue_script(
                 I4T3_NAME,
-                plugin_dir_url(__FILE__) . 'js/admin.js',
-                array('jquery'),
+                plugin_dir_url( __FILE__ ) . 'js/admin.js',
+                array( 'jquery' ),
                 I4T3_VERSION,
                 false
             );
@@ -110,15 +109,16 @@ class _404_To_301_Admin {
                 'i4t3strings',
                 array(
                     'redirect' => esc_html__( 'Custom Redirect', I4T3_DOMAIN ),
+                    'delete_confirm' => esc_html__( 'Are you sure? You will lose the custom redirects for the deleting logs.', I4T3_DOMAIN ),
                 )
             );
         }
     }
 
     /**
-     * Run upgrade functions
+     * Run upgrade functions.
      *
-     * If 404 to 301 is upgraded, we may need to perform few updations in db
+     * If 404 to 301 is upgraded, we may need to perform few updations in db.
      * 
      * @since  2.0.0
      * @access public
@@ -126,21 +126,22 @@ class _404_To_301_Admin {
      * 
      * @return void
      */
-    public function i4t3_upgrade_if_new() {
+    public function upgrade_if_new() {
 
-        if( ! get_option( 'i4t3_version_no' ) || ( get_option( 'i4t3_version_no' ) < I4T3_VERSION ) ) {
-            // call activator class once more
-            if( ! class_exists( '_404_To_301_Activator' ) ) {
+        if ( ! get_option( 'i4t3_version_no' ) || ( get_option( 'i4t3_version_no' ) < I4T3_VERSION ) ) {
+            // Call activator class once more
+            if ( ! class_exists( '_404_To_301_Activator' ) ) {
                 include_once I4T3_PLUGIN_DIR . '/includes/class-404-to-301-activator.php';
             }
+            
             _404_To_301_Activator::activate();
-            // update plugin version
-            update_option('i4t3_version_no', I4T3_VERSION );
+            // Update plugin version
+            update_option( 'i4t3_version_no', I4T3_VERSION );
         }
     }
 
     /**
-     * Changing email notification recipient
+     * Changing email notification recipient.
      *
      * Using filter to change email notification recipient address from
      * default admin email.
@@ -151,15 +152,15 @@ class _404_To_301_Admin {
      * 
      * @return string $email.
      */
-    public function i4t3_change_notify_email( $email ) {
-        
-        if( ! empty( $this->gnrl_options['email_notify_address'] ) ) {
+    public function change_notify_email( $email ) {
+
+        if ( ! empty( $this->gnrl_options['email_notify_address'] ) ) {
             $email_option = $this->gnrl_options['email_notify_address'];
-            if( is_email( $email_option ) ) {
+            if ( is_email( $email_option ) ) {
                 $email = $email_option;
             }
         }
-        
+
         return $email;
     }
 
@@ -172,15 +173,15 @@ class _404_To_301_Admin {
      * 
      * @return void
      */
-    public function i4t3_create_404_to_301_menu() {
+    public function create_menu() {
 
         // Error log menu
         $hook = add_menu_page(
-            __( '404 Error Logs', '404-to-301' ),
-            __( '404 Error Logs', '404-to-301' ),
+            __( '404 Error Logs', I4T3_DOMAIN ),
+            __( '404 Error Logs', I4T3_DOMAIN ),
             I4T3_ADMIN_PERMISSION,
             'i4t3-logs',
-            array( $this, 'i4t3_render_list_page' ),
+            array( $this, 'render_list_page' ),
             'dashicons-redo',
             90
         );
@@ -190,15 +191,15 @@ class _404_To_301_Admin {
         // 404 to 301 settings menu
         add_submenu_page(
             'i4t3-logs',
-            __('404 to 301 Settings', '404-to-301'),
-            __('404 Settings', '404-to-301'),
+            __( '404 to 301 Settings', I4T3_DOMAIN ),
+            __( '404 Settings', I4T3_DOMAIN ),
             I4T3_ADMIN_PERMISSION,
             'i4t3-settings',
-            array( $this, 'i4t3_admin_page' )
+            array( $this, 'admin_page' )
         );
-        
-        // admin menu item acion hook
-        do_action('i4t3_admin_page');
+
+        // Admin menu item acion hook
+        do_action( 'i4t3_admin_page' );
     }
 
     /**
@@ -210,7 +211,7 @@ class _404_To_301_Admin {
      * @return string
      */
     public static function set_screen( $status, $option, $value ) {
-        
+
         return $value;
     }
 
@@ -229,7 +230,7 @@ class _404_To_301_Admin {
 
         $option = 'per_page';
         $args = array(
-            'label' => __('Error Logs', '404-to-301'),
+            'label' => __( 'Error Logs', I4T3_DOMAIN ),
             'default' => 20,
             'option' => 'logs_per_page'
         );
@@ -264,20 +265,21 @@ class _404_To_301_Admin {
      * 
      * @return void
      */
-    public function i4t3_render_list_page() { ?>
-        
+    public function render_list_page() {
+        ?>
+
         <div class="wrap">
-            <h2><?php _e('404 Error Logs', '404-to-301'); ?></h2>
+            <h2><?php _e( '404 Error Logs', I4T3_DOMAIN ); ?></h2>
 
             <div id="poststuff">
                 <div id="post-body" class="metabox-holder">
                     <div id="post-body-content">
                         <div class="meta-box-sortables ui-sortable">
                             <form method="post">
-                            <?php
-                            $this->list_table->prepare_items();
-                            $this->list_table->display();
-                            ?>
+        <?php
+        $this->list_table->prepare_items();
+        $this->list_table->display();
+        ?>
                             </form>
                         </div>
                     </div>
@@ -298,11 +300,11 @@ class _404_To_301_Admin {
      * 
      * @return void
      */
-    public function i4t3_rename_plugin_menu() {
-        
+    public function rename_plugin_menu() {
+
         global $menu;
         // change menu text
-        $menu[90][0] = __('404 to 301', '404-to-301');
+        $menu[90][0] = __( '404 to 301', I4T3_DOMAIN );
     }
 
     /**
@@ -316,9 +318,9 @@ class _404_To_301_Admin {
      * 
      * @return void
      */
-    public function i4t3_admin_page() {
+    public function admin_page() {
 
-        include_once  I4T3_PLUGIN_DIR . '/admin/partials/404-to-301-admin-display.php';
+        include_once I4T3_PLUGIN_DIR . '/admin/partials/404-to-301-admin-display.php';
     }
 
     /**
@@ -333,7 +335,7 @@ class _404_To_301_Admin {
      * 
      * @return void
      */
-    public function i4t3_options_register() {
+    public function options_register() {
 
         register_setting(
             'i4t3_gnrl_options',
@@ -351,16 +353,16 @@ class _404_To_301_Admin {
      * 
      * @return mixed
      */
-    public function i4t3_dashboard_footer() {
-        
+    public function dashboard_footer() {
+
         // current page global var
         global $pagenow;
-        
-        if( ( $pagenow == 'admin.php' ) && ( in_array( $_GET['page'], array( 'i4t3-settings', 'i4t3-logs' ) ) ) ) {
 
-            _e('Thank you for choosing 404 to 301 to improve your website', '404-to-301');
+        if ( ( $pagenow == 'admin.php' ) && ( in_array( $_GET['page'], array( 'i4t3-settings', 'i4t3-logs' ) ) ) ) {
+
+            _e( 'Thank you for choosing 404 to 301 to improve your website', I4T3_DOMAIN );
             echo ' | ';
-            printf(__('Kindly give this plugin a %srating%s', '404-to-301'), '<a href="https://wordpress.org/support/view/plugin-reviews/404-to-301?filter=5#postform">', ' &#9733; &#9733; &#9733; &#9733; &#9733;</a>');
+            printf( __( 'Kindly give this plugin a %srating%s', I4T3_DOMAIN ), '<a href="https://wordpress.org/support/view/plugin-reviews/404-to-301?filter=5#postform">', ' &#9733; &#9733; &#9733; &#9733; &#9733;</a>' );
         } else {
             return;
         }
@@ -377,20 +379,20 @@ class _404_To_301_Admin {
      * 
      * @return array $links Links to display.
      */
-    public function i4t3_plugin_action_links($links, $file) {
-        
-        $plugin_file = basename('404-to-301.php');
-        
+    public function plugin_action_links( $links, $file ) {
+
+        $plugin_file = basename( '404-to-301.php' );
+
         if ( basename( $file ) == $plugin_file ) {
-            $settings_link = '<a href="admin.php?page=i4t3-settings">' . __('Settings', '404-to-301') . '</a>';
-            $settings_link .= ' | <a href="admin.php?page=i4t3-logs">' . __('Logs', '404-to-301') . '</a>';
-            
+            $settings_link = '<a href="admin.php?page=i4t3-settings">' . __( 'Settings', I4T3_DOMAIN ) . '</a>';
+            $settings_link .= ' | <a href="admin.php?page=i4t3-logs">' . __( 'Logs', I4T3_DOMAIN ) . '</a>';
+
             array_unshift( $links, $settings_link );
         }
-        
+
         return $links;
     }
-    
+
     /**
      * This function includes required scripts for custom modal
      * 
@@ -403,10 +405,10 @@ class _404_To_301_Admin {
      * @return void
      */
     public function add_thickbox() {
-        
+
         return add_thickbox();
     }
-    
+
     /**
      * Get custom redirect modal content
      * 
@@ -419,20 +421,20 @@ class _404_To_301_Admin {
      * @return JSON
      */
     public function open_custom_redirect() {
-        
+
         // verify if required value is available
-        if ( ! isset( $_POST['url_404'] ) || is_null( $_POST['url_404'] ) ) {
+        if ( !isset( $_POST['url_404'] ) || is_null( $_POST['url_404'] ) ) {
             die();
         }
         // 404 path url
         $url_404 = trim( $_POST['url_404'] );
-        
+
         global $wpdb;
         // make sure that the errors are hidden
         $wpdb->hide_errors();
         // get the custom redirect data for the given 404 path
         $sql = "SELECT redirect FROM " . I4T3_TABLE . " WHERE url = '" . $url_404 . "' AND redirect IS NOT NULL LIMIT 0,1";
-        $url =  $wpdb->get_var($sql);
+        $url = $wpdb->get_var( $sql );
         // make sure that the result is not error
         $url = ( empty( $url ) ) ? '' : $url;
         // make response array
@@ -443,7 +445,7 @@ class _404_To_301_Admin {
         // resturn josn output and die
         wp_send_json( $data );
     }
-    
+
     /**
      * Save custom redirect value
      * 
@@ -456,35 +458,33 @@ class _404_To_301_Admin {
      * @return void
      */
     public function save_custom_redirect() {
-        
+
         // verify the nonce for ajax
         $secure = check_ajax_referer( 'i4t3_custom_redirect_nonce', 'nonce', false );
-        if( ! $secure ) {
+        if ( !$secure ) {
             die( 'Go take a bath' );
         }
-        
+
         // if required values are not given, kill
-        if ( ! isset( $_POST['url_404'] ) || ! isset( $_POST['url'] ) ) {
+        if ( !isset( $_POST['url_404'] ) || !isset( $_POST['url'] ) ) {
             die();
         }
         // get the required values from request
         $url_404 = $_POST['url_404'];
         $url = $_POST['url'];
-        
+
         global $wpdb;
         // make sure that the errors are hidden
         $wpdb->hide_errors();
         // update the custom redirect value for the 404 path
         $wpdb->query(
-            $wpdb->prepare( 
-                "UPDATE " . I4T3_TABLE . "
+                $wpdb->prepare(
+                        "UPDATE " . I4T3_TABLE . "
                 SET redirect = '%s'
-                WHERE url = '%s'", 
-                $url, 
-                $url_404
-            )
+                WHERE url = '%s'", $url, $url_404
+                )
         );
-        
+
         die();
     }
 
@@ -497,10 +497,10 @@ class _404_To_301_Admin {
      * @return void
      */
     public function get_redirect_content() {
-        
+
         include_once I4T3_PLUGIN_DIR . '/admin/partials/404-to-301-admin-custom-redirect.php';
     }
-    
+
     /**
      * This function updates terms and conditions options
      * 
@@ -511,7 +511,7 @@ class _404_To_301_Admin {
      */
     public function agreement_notice() {
 
-        if( isset( $_GET['i4t3_agreement'] ) ) {
+        if ( isset( $_GET['i4t3_agreement'] ) ) {
             $agreement = ($_GET['i4t3_agreement'] == 0) ? 0 : 1;
             update_option( 'i4t3_agreement', $agreement );
         }
@@ -531,40 +531,40 @@ class _404_To_301_Admin {
      * @return	$html		Html content to diplay.
      * @author	Joel James
      */
-    public function i4t3_get_debug_data() {
+    public function get_debug_data() {
 
         $html = '';
-        $gnrl_options = get_option('i4t3_gnrl_options');
-        $active_plugins = get_option('active_plugins', array());
+        $gnrl_options = get_option( 'i4t3_gnrl_options' );
+        $active_plugins = get_option( 'active_plugins', array() );
         $active_theme = wp_get_theme();
 
         // Dump the plugin settings data
-        if (!empty($gnrl_options)) {
-            $html .= '<h4>' . __('Settings Data', '404-to-301') . '</h4><p><pre>';
-            foreach ($gnrl_options as $key => $option) {
+        if ( !empty( $gnrl_options ) ) {
+            $html .= '<h4>' . __( 'Settings Data', I4T3_DOMAIN ) . '</h4><p><pre>';
+            foreach ( $gnrl_options as $key => $option ) {
                 $html .= $key . ' : ' . $option . '<br/>';
             }
             $html .= '</pre></p><hr/>';
         }
         // Output basic info about the site
-        $html .= '<h4>' . __('Basic Details', '404-to-301') . '</h4><p>
-		' . __('WordPress Version', '404-to-301') . ' : ' . get_bloginfo('version') . '<br/>
-		' . __('PHP Version', '404-to-301') . ' : ' . PHP_VERSION . '<br/>
-                ' . __('Plugin Version', '404-to-301') . ' : ' . I4T3_VERSION . '<br/>
-		' . __('Home Page', '404-to-301') . ' : ' . home_url() . '<br/></p><hr/>';
+        $html .= '<h4>' . __( 'Basic Details', I4T3_DOMAIN ) . '</h4><p>
+		' . __( 'WordPress Version', I4T3_DOMAIN ) . ' : ' . get_bloginfo( 'version' ) . '<br/>
+		' . __( 'PHP Version', I4T3_DOMAIN ) . ' : ' . PHP_VERSION . '<br/>
+                ' . __( 'Plugin Version', I4T3_DOMAIN ) . ' : ' . I4T3_VERSION . '<br/>
+		' . __( 'Home Page', I4T3_DOMAIN ) . ' : ' . home_url() . '<br/></p><hr/>';
 
-        if ($active_theme->exists()) {
+        if ( $active_theme->exists() ) {
 
-            $html .= '<h4>' . __('Active Theme Details', '404-to-301') . '</h4><p>
-		' . __('Name', '404-to-301') . ' : ' . $active_theme->get('Name') . '<br/>
-		' . __('Version', '404-to-301') . ' : ' . $active_theme->get('Version') . '<br/>
-		' . __('Theme URI', '404-to-301') . ' : ' . $active_theme->get('ThemeURI') . '<br/></p><hr/>';
+            $html .= '<h4>' . __( 'Active Theme Details', I4T3_DOMAIN ) . '</h4><p>
+		' . __( 'Name', I4T3_DOMAIN ) . ' : ' . $active_theme->get( 'Name' ) . '<br/>
+		' . __( 'Version', I4T3_DOMAIN ) . ' : ' . $active_theme->get( 'Version' ) . '<br/>
+		' . __( 'Theme URI', I4T3_DOMAIN ) . ' : ' . $active_theme->get( 'ThemeURI' ) . '<br/></p><hr/>';
         }
 
         // Dump the active plugins data
-        if (!empty($active_plugins)) {
-            $html .= '<h4>' . __('Active Plugins', '404-to-301') . '</h4><p>';
-            foreach ($active_plugins as $plugin) {
+        if ( !empty( $active_plugins ) ) {
+            $html .= '<h4>' . __( 'Active Plugins', I4T3_DOMAIN ) . '</h4><p>';
+            foreach ( $active_plugins as $plugin ) {
                 $html .= $plugin . '<br/>';
             }
             $html .= '</p>';
@@ -572,4 +572,5 @@ class _404_To_301_Admin {
 
         return $html;
     }
+
 }

@@ -119,12 +119,12 @@ class _404_To_301 {
         $this->loader->add_filter('admin_init', $plugin_admin, 'add_buffer');
         $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
         $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
-        $this->loader->add_action('admin_menu', $plugin_admin, 'i4t3_create_404_to_301_menu');
-        $this->loader->add_action('admin_menu', $plugin_admin, 'i4t3_rename_plugin_menu');
-        $this->loader->add_action('admin_init', $plugin_admin, 'i4t3_options_register');
-        $this->loader->add_filter('admin_footer_text', $plugin_admin, 'i4t3_dashboard_footer');
-        $this->loader->add_filter('plugin_action_links', $plugin_admin, 'i4t3_plugin_action_links', 10, 5);
-        $this->loader->add_action('plugins_loaded', $plugin_admin, 'i4t3_upgrade_if_new');
+        $this->loader->add_action('admin_menu', $plugin_admin, 'create_menu');
+        $this->loader->add_action('admin_menu', $plugin_admin, 'rename_plugin_menu');
+        $this->loader->add_action('admin_init', $plugin_admin, 'options_register');
+        $this->loader->add_filter('admin_footer_text', $plugin_admin, 'dashboard_footer');
+        $this->loader->add_filter('plugin_action_links', $plugin_admin, 'plugin_action_links', 10, 5);
+        $this->loader->add_action('plugins_loaded', $plugin_admin, 'upgrade_if_new');
         $this->loader->add_filter('i4t3_notify_admin_email_address', $plugin_admin, 'i4t3_change_notify_email');
         $this->loader->add_filter('set-screen-option', $plugin_admin, 'set_screen', 10, 3);
         $this->loader->add_action('admin_footer', $plugin_admin, 'add_thickbox', 100);

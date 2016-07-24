@@ -24,15 +24,15 @@ if ( ! defined( 'WPINC' ) ) {
 	?>
 
 	<div class="wrap">
-	    <h2>404 to 301 | <?php _e( 'Settings', '404-to-301' ); ?></h2><br>
+	    <h2>404 to 301 | <?php _e( 'Settings', I4T3_DOMAIN ); ?></h2><br>
 	    <?php if( isset($_GET['settings-updated']) ) { ?>
 			<div class="updated">
-				<p><strong>404 to 301 <?php _e( 'settings updated successfully', '404-to-301' ); ?></strong></p>
+				<p><strong>404 to 301 <?php _e( 'settings updated successfully', I4T3_DOMAIN ); ?></strong></p>
 			</div>
 		<?php } ?>
 	    <h2 class="nav-tab-wrapper">
-		    <a href="?page=i4t3-settings&tab=general" class="nav-tab <?php echo $general_class; ?>"><?php _e( 'General', '404-to-301' ); ?></a>
-		    <a href="?page=i4t3-settings&tab=credits" class="nav-tab <?php echo $credits_class ?>"><?php _e( 'Help & Info', '404-to-301' ); ?></a>
+		    <a href="?page=i4t3-settings&tab=general" class="nav-tab <?php echo $general_class; ?>"><?php _e( 'General', I4T3_DOMAIN ); ?></a>
+		    <a href="?page=i4t3-settings&tab=credits" class="nav-tab <?php echo $credits_class ?>"><?php _e( 'Help & Info', I4T3_DOMAIN ); ?></a>
 	    </h2>
 	</div>
 

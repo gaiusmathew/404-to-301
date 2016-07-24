@@ -263,7 +263,7 @@ class _404_To_301_Public {
         $data['ip'] = $this->get_ip();
         foreach ( $server as $key => $value ) {
             if ( ! empty( $_SERVER[ $value ] ) ) {
-                $string = $_SERVER[ $value ];
+                $string = wp_strip_all_tags( $_SERVER[ $value ] );
             } else {
                 $string = '';
             }
