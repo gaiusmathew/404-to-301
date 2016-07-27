@@ -11,8 +11,11 @@ if ( ! defined( 'WPINC' ) ) {
  * So we have copied this class and using independently to avoid future issues. 
  */
 if ( ! class_exists('WP_List_Table_404') ) {
-
+    
+    // Get current WordPress version.
     global $wp_version;
+    // There are changes in list table class since WP 4.4
+    // So we will load separate class for 4.4 above and below versions.
     if( $wp_version >= 4.4 ) {
         include_once I4T3_PLUGIN_DIR . '/admin/core/class-wp-list-table-4.4.php';
     } else {
@@ -130,6 +133,8 @@ class _404_To_301_Logs extends WP_List_Table_404 {
         // Get query offset based on page number.
         $offset = ( $page_number - 1 ) * $per_page;
         
+        $count = empty( $group_by ) ? '' : ',count(id) as count ';
+        
         // Get group by query if set.
         if ( ! empty( $group_by ) ) {
             $group_by = ' GROUP BY ' . $group_by;
@@ -145,7 +150,7 @@ class _404_To_301_Logs extends WP_List_Table_404 {
 
         $result = $wpdb->get_results(
             $wpdb->prepare(
-                "SELECT * FROM " . I4T3_TABLE . $group_by . " ORDER BY $orderby $order LIMIT %d OFFSET %d", array( $per_page, $offset )
+                "SELECT * " . $count . " FROM " . I4T3_TABLE . $group_by . " ORDER BY $orderby $order LIMIT %d OFFSET %d", array( $per_page, $offset )
             ),
             'ARRAY_A'
         );
@@ -313,9 +318,11 @@ class _404_To_301_Logs extends WP_List_Table_404 {
             case 'ua':
             case 'redirect':
                 return $item[ $column_name ];
+                break;
             default:
-                //Show the whole array for troubleshooting purposes
+                //Show the whole array for troubleshooting purposes.
                 return print_r( $item, true );
+                break;
         }
     }
 
@@ -401,8 +408,11 @@ class _404_To_301_Logs extends WP_List_Table_404 {
      * @return string $url_data Url column text data.
      */
     public function column_url( $item ) {
+        
+        // If grouped, show the count of each different errors.
+        $count = empty( $item['count'] ) ? "" : " (<strong>" . intval( $item['count'] ) . "</strong>)";
 
-        return apply_filters( 'i4t3_log_list_url_column', $this->get_empty_text( '<p class="i4t3-url-p">' . wp_strip_all_tags( $item['url'] ) . '</p>' ) );
+        return apply_filters( 'i4t3_log_list_url_column', $this->get_empty_text( '<p><span class="i4t3-url-p">' . wp_strip_all_tags( $item['url'] ) . '</span>' .  $count . '</p>' ) );
     }
 
     /**
